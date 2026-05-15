@@ -34,6 +34,7 @@ Thumbs.db
 *.log
 infrasight-api/.env
 infrasight-web/.env
+infrasight-web/.env.production
 infrasight-api/infrasight-gzu-*.json
 infrasight-api/.venv/
 infrasight-web/node_modules/

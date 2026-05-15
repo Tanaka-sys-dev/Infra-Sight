@@ -2,11 +2,13 @@
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Legend } from 'recharts'
 import { alertsAPI, devicesAPI, predictionsAPI, telemetryAPI } from '../services/api'
 import { useApiData } from '../services/useApiData'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useDemoMode } from '../contexts/DemoContext'
 
 export default function Dashboard() {
   const [refreshKey, setRefreshKey] = useState(0)
   const [polling, setPolling] = useState(false)
+  const { isDemoMode } = useDemoMode()
   const devicesState = useApiData(devicesAPI.getAll, `devices-${refreshKey}`)
   const alertsState = useApiData(alertsAPI.getAll, `alerts-${refreshKey}`)
   const predictionsState = useApiData(predictionsAPI.getPredictions, `predictions-${refreshKey}`)
@@ -19,6 +21,11 @@ export default function Dashboard() {
   const modelInfo = modelState.data || {}
   const refresh = () => setRefreshKey(value => value + 1)
   const pollAll = async () => { setPolling(true); try { await telemetryAPI.pollAllDevices(); refresh() } finally { setPolling(false) } }
+  useEffect(() => {
+    if (!isDemoMode) return undefined
+    const interval = setInterval(refresh, 10000)
+    return () => clearInterval(interval)
+  }, [isDemoMode])
   const today = new Date().toDateString()
   const activeAlerts = alerts.filter(a => !a.resolved && (a.status || 'active') !== 'resolved')
   const onlineDevices = devices.filter(d => d.status === 'online').length

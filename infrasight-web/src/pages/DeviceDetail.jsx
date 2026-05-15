@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { alertsAPI, devicesAPI, predictionsAPI, telemetryAPI } from '../services/api'
+import { useDemoMode } from '../contexts/DemoContext'
 
 const metrics = [
   ['cpuUsage', 'CPU Usage', '%'],
@@ -24,6 +25,7 @@ export default function DeviceDetail() {
   const [simulating, setSimulating] = useState(false)
   const [prediction, setPrediction] = useState(null)
   const [predicting, setPredicting] = useState(false)
+  const { isDemoMode, demoDeviceId } = useDemoMode()
 
   const loadData = async () => {
     const [deviceData, streamData, alertData, predictionData] = await Promise.all([
@@ -74,6 +76,14 @@ export default function DeviceDetail() {
       setSimulating(false)
     }
   }
+
+  useEffect(() => {
+    if (!isDemoMode || deviceId !== demoDeviceId || !device) return undefined
+    const interval = setInterval(() => {
+      telemetryAPI.simulateDevice(demoDeviceId, device.type || 'server', 'high_cpu_overload', 1).then(loadData).catch(() => {})
+    }, 15000)
+    return () => clearInterval(interval)
+  }, [isDemoMode, demoDeviceId, deviceId, device])
 
   const predictNow = async () => {
     if (!device || !current || !Object.keys(current).length) return

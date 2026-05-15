@@ -1,7 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useDemoMode } from '../contexts/DemoContext'
 
 export default function Layout({ children }) {
   const location = useLocation()
+  const { isDemoMode, toggleDemoMode } = useDemoMode()
 
   const navItems = [
     { path: '/', label: 'Dashboard' },
@@ -36,11 +38,13 @@ export default function Layout({ children }) {
       <main className="main-content">
         <header className="topbar">
           <h2>{navItems.find(item => location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path)))?.label || 'Dashboard'}</h2>
-          <span>Great Zimbabwe University</span>
+          <div className="topbar-actions"><button onClick={toggleDemoMode}>{isDemoMode ? 'Disable Demo Mode' : 'Enable Demo Mode'}</button><span>Great Zimbabwe University</span></div>
         </header>
+        {isDemoMode && <div className="demo-banner">DEMO MODE - Great Zimbabwe University Examination</div>}
         <div className="content">
           {children}
         </div>
+        {isDemoMode && <aside className="demo-guide"><h4>Examiner Guide</h4><strong>Key features</strong><p>Dashboard KPIs, live device telemetry, Random Forest predictions, alerts, scenario validation, evaluation export.</p><strong>5 minute click sequence</strong><p>Dashboard → Devices → sw-001 → Predictions → Alerts → Scenarios → Evaluation → Export PDF.</p></aside>}
       </main>
       <style>{`
         .app {
@@ -102,6 +106,13 @@ export default function Layout({ children }) {
           color: #333;
         }
         .topbar span { color: #16a34a; font-weight: 700; }
+        .topbar-actions { display: flex; gap: 14px; align-items: center; }
+        .topbar-actions button { background: #16a34a; color: white; border: 0; border-radius: 10px; padding: 9px 12px; font-weight: 800; cursor: pointer; }
+        .demo-banner { background: #fef3c7; color: #92400e; padding: 12px 30px; font-weight: 900; border-bottom: 1px solid #f59e0b; }
+        .demo-guide { position: fixed; right: 22px; bottom: 22px; width: 280px; background: #111827; color: white; padding: 18px; border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,.3); z-index: 20; }
+        .demo-guide h4 { margin: 0 0 10px; color: #fbbf24; }
+        .demo-guide strong { color: #86efac; }
+        .demo-guide p { font-size: 12px; line-height: 1.5; color: #e5e7eb; }
         .content {
           flex: 1;
           padding: 30px;

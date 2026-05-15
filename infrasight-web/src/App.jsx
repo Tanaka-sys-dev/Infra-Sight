@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './components/AuthContext'
+import { DemoProvider } from './contexts/DemoContext'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Dashboard from './pages/Dashboard'
@@ -16,8 +17,9 @@ import Login from './pages/Login'
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
+      <DemoProvider>
+        <Router>
+          <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
           <Route path="/devices" element={<ProtectedRoute><Layout><Devices /></Layout></ProtectedRoute>} />
@@ -28,8 +30,9 @@ function App() {
           <Route path="/evaluation" element={<ProtectedRoute><Layout><Evaluation /></Layout></ProtectedRoute>} />
           <Route path="/telemetry" element={<ProtectedRoute><Layout><Telemetry /></Layout></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
+      </DemoProvider>
     </AuthProvider>
   )
 }
