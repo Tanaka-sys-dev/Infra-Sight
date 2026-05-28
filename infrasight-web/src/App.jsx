@@ -13,6 +13,7 @@ import Evaluation from './pages/Evaluation'
 import Telemetry from './pages/Telemetry'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
+import InfrastructurePage from './pages/InfrastructurePage'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/evaluation" element={<ProtectedRoute><Layout><Evaluation /></Layout></ProtectedRoute>} />
           <Route path="/telemetry" element={<ProtectedRoute><Layout><Telemetry /></Layout></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
+          <Route path="/infrastructure" element={<ProtectedRoute><Layout><InfrastructurePage /></Layout></ProtectedRoute>} />
           </Routes>
         </Router>
       </DemoProvider>

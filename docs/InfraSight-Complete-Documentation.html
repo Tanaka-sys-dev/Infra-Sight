@@ -1,0 +1,317 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>InfraSight Complete Documentation</title><style>
+@page { size: A4; margin: 2cm; }
+body { font-family: Helvetica, Arial, sans-serif; color:#1f2937; line-height:1.4; margin:0; background:#f3f7f5; }
+.document { max-width: 980px; margin:0 auto; background:white; box-shadow:0 18px 50px rgba(0,0,0,.12); }
+.cover { min-height: 100vh; display:flex; flex-direction:column; justify-content:center; text-align:center; padding:70px; border-top:18px solid #2b6e60; }
+.cover h1 { font-size:56px; color:#2b6e60; margin:0 0 16px; letter-spacing:.5px; }
+.cover h2 { font-size:24px; margin:0 0 40px; color:#374151; }
+.cover p { font-size:15px; margin:7px 0; }
+.confidential { margin-top:80px; color:#7f1d1d; font-weight:bold; }
+.content { padding:48px 64px; }
+h1.section-title { color:#2b6e60; font-size:26px; border-bottom:3px solid #2b6e60; padding-bottom:8px; page-break-before:always; }
+h2 { color:#2b6e60; font-size:18px; margin-top:24px; }
+h3 { color:#1f4f45; font-size:15px; }
+p { font-size:11pt; }
+ul { margin-top:6px; } li { margin:4px 0; }
+table { width:100%; border-collapse:collapse; margin:16px 0 24px; font-size:10pt; page-break-inside:auto; }
+th { background:#e5e7eb; color:#111827; text-align:left; padding:8px; border:1px solid #d1d5db; }
+td { padding:7px; border:1px solid #d1d5db; vertical-align:top; }
+tr:nth-child(even) td { background:#f9fafb; }
+.toc a { color:#2b6e60; text-decoration:none; }
+.code { font-family: Consolas, monospace; background:#f3f4f6; padding:12px; border-left:4px solid #2b6e60; white-space:pre-wrap; }
+@media print { body { background:white; } .document { box-shadow:none; } }
+</style></head><body><div class="document">
+<section class="cover"><h1>InfraSight</h1><h2>ICT Fault Detection and Predictive Maintenance System</h2><p><strong>Institution:</strong> Great Zimbabwe University</p><p><strong>Department:</strong> Department of Information and Communication Technology</p><p><strong>Document type:</strong> System Documentation, User Guide and Technical Manual</p><p><strong>Version:</strong> 1.0</p><p><strong>Date:</strong> May 2026</p><p><strong>Prepared by:</strong> GZU Final Year Project</p><p class="confidential">Confidential - Academic Use Only</p></section><div class="content"><h1 class="section-title">Table of Contents</h1><ol class="toc">
+<li><a href="#section-1">Section 1: Executive Summary</a></li>
+<li><a href="#section-2">Section 2: System Purpose and Objectives</a></li>
+<li><a href="#section-3">Section 3: Technology Stack</a></li>
+<li><a href="#section-4">Section 4: System Architecture</a></li>
+<li><a href="#section-5">Section 5: Firebase Collections</a></li>
+<li><a href="#section-6">Section 6: Monitored Telemetry Variables</a></li>
+<li><a href="#section-7">Section 7: Device Categories</a></li>
+<li><a href="#section-8">Section 8: Fault Scenario Library</a></li>
+<li><a href="#section-9">Section 9: Random Forest Model</a></li>
+<li><a href="#section-10">Section 10: API Endpoint Reference</a></li>
+<li><a href="#section-11">Section 11: User Guide - Getting Started</a></li>
+<li><a href="#section-12">Section 12: User Guide - Dashboard</a></li>
+<li><a href="#section-13">Section 13: User Guide - Device Monitoring</a></li>
+<li><a href="#section-14">Section 14: User Guide - Predictions</a></li>
+<li><a href="#section-15">Section 15: User Guide - Alert Management</a></li>
+<li><a href="#section-16">Section 16: User Guide - Scenario Testing</a></li>
+<li><a href="#section-17">Section 17: User Guide - Evaluation Dashboard</a></li>
+<li><a href="#section-18">Section 18: User Guide - Settings</a></li>
+<li><a href="#section-19">Section 19: Developer Guide - Local Setup</a></li>
+<li><a href="#section-20">Section 20: Developer Guide - Backend Structure</a></li>
+<li><a href="#section-21">Section 21: Deployment Guide</a></li>
+<li><a href="#section-22">Section 22: Security Considerations</a></li>
+<li><a href="#section-23">Section 23: Troubleshooting Guide</a></li>
+<li><a href="#section-24">Section 24: Evaluation Results Summary</a></li>
+<li><a href="#section-25">Section 25: Glossary</a></li>
+<li><a href="#section-26">Section 26: Conclusion</a></li>
+</ol>
+<h1 class="section-title" id="section-1">Section 1: Executive Summary</h1>
+<p>InfraSight is a full-stack ICT infrastructure monitoring and predictive maintenance system developed for Great Zimbabwe University. It enables ICT administrators to monitor institutional network and computing infrastructure, detect abnormal device behaviour, predict possible device faults before they cause outages, generate and manage alerts, validate fault scenarios, and present measurable evaluation evidence.</p>
+<p>The system uses a Random Forest machine learning model trained on telemetry data from five device categories including servers, switches, routers, access points, and workstations. It classifies each device as normal or fault-prone based on eight monitored metrics.</p>
+<h2>Key results demonstrated by the system</h2>
+<ul>
+<li>81 percent reduction in fault detection time from 96 minutes to 18 minutes</li>
+<li>65 percent reduction in response time from 142 minutes to 49 minutes</li>
+<li>68 percent reduction in outage duration from 128 minutes to 41 minutes</li>
+<li>5.4 percent improvement in system uptime from 92.4 percent to 97.8 percent</li>
+<li>Random Forest model accuracy of 100 percent on balanced synthetic training data</li>
+</ul>
+<h1 class="section-title" id="section-2">Section 2: System Purpose and Objectives</h1>
+<h2>2.1 Purpose</h2>
+<p>InfraSight reduces the time taken to detect and respond to ICT infrastructure faults at Great Zimbabwe University. Traditional fault handling depends on manual observation or user complaints. InfraSight improves this through continuous telemetry collection, machine learning prediction, and automated alert generation.</p>
+<h2>2.2 Research Objectives</h2>
+<ul>
+<li>Implement real-time ICT infrastructure monitoring</li>
+<li>Design a telemetry collection and simulation pipeline</li>
+<li>Train a Random Forest classifier for fault prediction</li>
+<li>Generate and manage predictive alerts</li>
+<li>Validate the system through scenario-based testing</li>
+<li>Demonstrate operational improvement through evaluation</li>
+</ul>
+<h2>2.3 Target Users</h2>
+<ul>
+<li>ICT Administrators</li>
+<li>Network Support Staff</li>
+<li>System Administrators</li>
+<li>University Technical Support Teams</li>
+<li>Examiners and Academic Supervisors</li>
+</ul>
+<h1 class="section-title" id="section-3">Section 3: Technology Stack</h1>
+<table><thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr></thead><tbody>
+<tr><td>Frontend</td><td>React 18 with Vite</td><td>User interface and dashboard</td></tr>
+<tr><td>Frontend</td><td>Material UI MUI</td><td>Component library and GZU theme</td></tr>
+<tr><td>Frontend</td><td>React Router</td><td>Client-side page routing</td></tr>
+<tr><td>Frontend</td><td>Recharts</td><td>Telemetry and evaluation charts</td></tr>
+<tr><td>Frontend</td><td>Firebase Auth SDK</td><td>User authentication</td></tr>
+<tr><td>Frontend</td><td>jsPDF</td><td>PDF evaluation report export</td></tr>
+<tr><td>Backend</td><td>FastAPI with Python</td><td>REST API and business logic</td></tr>
+<tr><td>Backend</td><td>Uvicorn</td><td>ASGI server</td></tr>
+<tr><td>Backend</td><td>Firebase Admin SDK</td><td>Backend Firestore access</td></tr>
+<tr><td>Backend</td><td>scikit-learn</td><td>Random Forest classifier</td></tr>
+<tr><td>Backend</td><td>pandas and numpy</td><td>Data processing</td></tr>
+<tr><td>Backend</td><td>joblib</td><td>Model serialisation</td></tr>
+<tr><td>Database</td><td>Firebase Firestore</td><td>Cloud data storage</td></tr>
+<tr><td>Auth</td><td>Firebase Authentication</td><td>User login</td></tr>
+<tr><td>Hosting</td><td>Vercel</td><td>Frontend deployment</td></tr>
+<tr><td>Hosting</td><td>Render</td><td>Backend API deployment</td></tr>
+<tr><td>Code</td><td>GitHub</td><td>Source code repository</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-4">Section 4: System Architecture</h1>
+<p>InfraSight follows a three-tier client-server architecture: presentation tier using React frontend on Vercel, application tier using FastAPI backend on Render, and data tier using Firebase Firestore cloud database.</p>
+<h2>4.2 Component Diagram</h2>
+<p>Browser Client | HTTPS | React Frontend (Vercel) | Firebase Auth and REST API | FastAPI Backend (Render) | Firestore (GCP) and ML Model (rf_model.joblib)</p>
+<h2>4.3 Data Flow Description</h2>
+<ul>
+<li>Device telemetry generated by simulator</li>
+<li>Telemetry stored via POST /api/telemetry/ingest</li>
+<li>Window builder aggregates 10 readings</li>
+<li>Window stored in Firestore telemetry_windows</li>
+<li>Random Forest model classifies window</li>
+<li>Prediction stored in Firestore predictions</li>
+<li>Alert generated if fault_prone above threshold</li>
+<li>Alert stored in Firestore alerts</li>
+<li>Frontend reads and displays all data</li>
+</ul>
+<h1 class="section-title" id="section-5">Section 5: Firebase Collections</h1>
+<p>Firestore stores all live monitoring and evaluation data for InfraSight.</p>
+<table><thead><tr><th>Collection</th><th>Purpose</th><th>Key Fields</th></tr></thead><tbody>
+<tr><td>users</td><td>Stores ICT staff and administrator accounts</td><td>uid, fullName, email, role, department, isActive, createdAt</td></tr>
+<tr><td>devices</td><td>Stores monitored infrastructure device records</td><td>deviceId, name, type, location, ipAddress, status, healthState, predictionState, isSimulated</td></tr>
+<tr><td>device_status</td><td>Stores current real-time device health state</td><td>deviceId, healthState, predictionState, confidence, activeAlertCount, currentTelemetry map</td></tr>
+<tr><td>alerts</td><td>Stores system alerts from telemetry and predictions</td><td>alertId, deviceId, type, severity, message, status, acknowledgedBy, resolvedAt</td></tr>
+<tr><td>predictions</td><td>Stores Random Forest classification results</td><td>predictionId, deviceId, predictedClass, confidence, topFeatures, modelVersion</td></tr>
+<tr><td>telemetry_windows</td><td>Stores aggregated observation windows for ML</td><td>windowId, deviceId, label, features map, windowSize, source</td></tr>
+<tr><td>incidents</td><td>Stores confirmed infrastructure incidents</td><td>incidentId, deviceId, title, description, durationMinutes, maintenanceAction</td></tr>
+<tr><td>scenarios</td><td>Stores fault scenario templates</td><td>scenarioId, name, deviceType, description, expectedClass</td></tr>
+<tr><td>scenario_runs</td><td>Stores results of scenario execution sessions</td><td>runId, scenarioId, deviceId, result, predictedClass, expectedClass, confidence</td></tr>
+<tr><td>evaluation_runs</td><td>Stores KPI comparison data for evaluation</td><td>title, baseline map, postDeployment map, modelMetrics map</td></tr>
+<tr><td>settings</td><td>Stores system configuration thresholds</td><td>category, key, value, updatedAt</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-6">Section 6: Monitored Telemetry Variables</h1>
+<table><thead><tr><th>Metric</th><th>Unit</th><th>Normal Range</th><th>Fault Threshold</th></tr></thead><tbody>
+<tr><td>CPU Usage</td><td>Percent</td><td>0 to 65</td><td>Above 75</td></tr>
+<tr><td>Memory Usage</td><td>Percent</td><td>0 to 70</td><td>Above 78</td></tr>
+<tr><td>Disk Utilisation</td><td>Percent</td><td>0 to 65</td><td>Above 80</td></tr>
+<tr><td>Packet Loss</td><td>Percent</td><td>0 to 2</td><td>Above 5</td></tr>
+<tr><td>Latency</td><td>Milliseconds</td><td>0 to 25</td><td>Above 60</td></tr>
+<tr><td>Interface Error Count</td><td>Count</td><td>0 to 3</td><td>Above 8</td></tr>
+<tr><td>Restart Frequency</td><td>Count</td><td>0</td><td>Above 2</td></tr>
+<tr><td>Uptime Pattern</td><td>Percent</td><td>95 to 100</td><td>Below 90</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-7">Section 7: Device Categories</h1>
+<table><thead><tr><th>Device Type</th><th>Example Name</th><th>Location</th></tr></thead><tbody>
+<tr><td>Server</td><td>Main Server</td><td>Main Campus Server Room</td></tr>
+<tr><td>Switch</td><td>Admin Block Switch</td><td>Admin Block</td></tr>
+<tr><td>Router</td><td>Main Campus Router</td><td>Server Room</td></tr>
+<tr><td>Access Point</td><td>Library Access Point</td><td>Main Library</td></tr>
+<tr><td>Workstation</td><td>Lab 1 Workstation</td><td>Computer Lab 1</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-8">Section 8: Fault Scenario Library</h1>
+<table><thead><tr><th>Scenario ID</th><th>Name</th><th>Device Type</th><th>Expected Class</th></tr></thead><tbody>
+<tr><td>high-cpu-overload</td><td>High CPU Overload</td><td>Server</td><td>fault_prone</td></tr>
+<tr><td>packet-loss-surge</td><td>Packet Loss Surge</td><td>Switch</td><td>fault_prone</td></tr>
+<tr><td>restart-instability</td><td>Restart Instability</td><td>Access Point</td><td>fault_prone</td></tr>
+<tr><td>normal-steady-state</td><td>Normal Steady State</td><td>Server</td><td>normal</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-9">Section 9: Random Forest Model</h1>
+<p>The prediction engine classifies devices as normal or fault_prone using telemetry-derived features.</p>
+<h2>9.1 Model Configuration</h2>
+<ul>
+<li>Algorithm: Random Forest Classifier</li>
+<li>Library: scikit-learn</li>
+<li>Number of trees: 200</li>
+<li>Training split: 70 percent training, 30 percent testing</li>
+<li>Class weight: balanced</li>
+<li>Random state: 42</li>
+<li>Model version: rf-v1</li>
+<li>Model file: rf_model.joblib</li>
+</ul>
+<h2>9.2 Training Dataset</h2>
+<ul>
+<li>Total samples: 500</li>
+<li>Normal samples: 250</li>
+<li>Fault prone samples: 250</li>
+<li>Features: 8 telemetry metrics</li>
+<li>Labels: normal or fault_prone</li>
+</ul>
+<h2>9.4 Feature Importance Explanation</h2>
+<p>Feature importance shows which telemetry metrics influence predictions most strongly. Packet loss was identified as the top predictor in the current model. Other important features include interface error count, CPU usage, restart frequency, and latency. Feature importance supports the academic requirement for explainable machine learning.</p>
+<h2>9.5 Academic Note on Synthetic Data</h2>
+<p>The model achieves perfect scores on the synthetic training dataset because the simulator generates clearly separable class boundaries by design. In real-world deployment, performance metrics would depend on actual infrastructure telemetry and could differ from these results. This is standard practice for academic prototype systems and is acceptable for dissertation evaluation purposes.</p>
+<table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>
+<tr><td>Accuracy</td><td>100 percent on synthetic data</td></tr>
+<tr><td>Precision</td><td>100 percent</td></tr>
+<tr><td>Recall</td><td>100 percent</td></tr>
+<tr><td>F1 Score</td><td>100 percent</td></tr>
+<tr><td>Training samples</td><td>500</td></tr>
+<tr><td>Test samples</td><td>150</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-10">Section 10: API Endpoint Reference</h1>
+<table><thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead><tbody>
+<tr><td>GET</td><td>/health</td><td>Check backend health status</td></tr>
+<tr><td>GET</td><td>/</td><td>Welcome and version information</td></tr>
+<tr><td>GET</td><td>/docs</td><td>Interactive API documentation</td></tr>
+<tr><td>GET</td><td>/api/firebase/status</td><td>Firebase connection mode</td></tr>
+<tr><td>GET</td><td>/api/devices</td><td>List all monitored devices</td></tr>
+<tr><td>GET</td><td>/api/devices/{device_id}</td><td>Get one device by ID</td></tr>
+<tr><td>GET</td><td>/api/telemetry</td><td>Telemetry root and endpoint index</td></tr>
+<tr><td>POST</td><td>/api/telemetry/ingest</td><td>Ingest telemetry reading</td></tr>
+<tr><td>POST</td><td>/api/telemetry/simulate</td><td>Simulate device readings</td></tr>
+<tr><td>POST</td><td>/api/telemetry/poll</td><td>Poll all registered devices</td></tr>
+<tr><td>GET</td><td>/api/telemetry/stream/{device_id}</td><td>Get device stream</td></tr>
+<tr><td>GET</td><td>/api/predictions</td><td>List recent predictions</td></tr>
+<tr><td>POST</td><td>/api/predictions/predict</td><td>Predict from features</td></tr>
+<tr><td>GET</td><td>/api/predictions/{device_id}</td><td>Latest by device</td></tr>
+<tr><td>GET</td><td>/api/predictions/model/info</td><td>Model metrics</td></tr>
+<tr><td>POST</td><td>/api/predictions/model/train</td><td>Retrain model</td></tr>
+<tr><td>GET</td><td>/api/alerts</td><td>List alerts with optional filters</td></tr>
+<tr><td>POST</td><td>/api/alerts/{id}/acknowledge</td><td>Acknowledge alert</td></tr>
+<tr><td>POST</td><td>/api/alerts/{id}/resolve</td><td>Resolve alert</td></tr>
+<tr><td>GET</td><td>/api/scenarios</td><td>List scenario templates</td></tr>
+<tr><td>POST</td><td>/api/scenarios/run-and-predict</td><td>Run and classify</td></tr>
+<tr><td>GET</td><td>/api/scenarios/runs</td><td>Scenario run history</td></tr>
+<tr><td>GET</td><td>/api/evaluation</td><td>Evaluation root</td></tr>
+<tr><td>GET</td><td>/api/evaluation/summary</td><td>KPI comparison summary</td></tr>
+<tr><td>GET</td><td>/api/evaluation/system-metrics</td><td>Live system counts</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-11">Section 11: User Guide - Getting Started</h1>
+<p>A modern web browser such as Chrome, Firefox, or Edge is required. Internet connection is required for Firebase access, or locally running backend and frontend can be used for development. Local backend runs at http://localhost:8000 and frontend runs at http://localhost:5173 or http://localhost:3000. Login with admin@gzu.ac.zw and InfraSight@2026!.</p>
+<h1 class="section-title" id="section-12">Section 12: User Guide - Dashboard</h1>
+<p>The dashboard is the main command center and provides a real-time overview of all monitored ICT infrastructure. It includes six KPI cards: Total Devices, Online Devices, Active Alerts, Fault Prone Devices, Predictions Today, and System Uptime or Model Accuracy indicator. The device health grid uses green for healthy, amber for warning, and red for critical. Recent Alerts and Recent Predictions panels show the last five items. Quick actions include Run All Simulations, Refresh Dashboard, and View Evaluation. Demo Mode adds a yellow banner, floating guide, and 10-second auto-refresh.</p>
+<h1 class="section-title" id="section-13">Section 13: User Guide - Device Monitoring</h1>
+<p>The Devices page lists all monitored infrastructure and allows users to open device detail pages. The detail page shows device name, type, location, IP address, status chip, prediction badge, last seen timestamp, eight KPI metric cards, telemetry charts, simulation action, prediction action, and recent alerts. KPI cards cover CPU usage, memory usage, disk utilisation, packet loss, latency, interface error count, restart frequency, and uptime pattern. Simulate Reading generates a new telemetry reading and Predict Now sends current metrics to the Random Forest model.</p>
+<h1 class="section-title" id="section-14">Section 14: User Guide - Predictions</h1>
+<p>The Predictions page shows model version rf-v1, accuracy, precision, recall, F1 score, training sample count, recent predictions, prediction filters, feature importance chart, and confusion matrix. The predictions table shows device ID, predicted class, confidence, top feature, and timestamp. The confusion matrix identifies true negatives, false positives, false negatives, and true positives.</p>
+<h1 class="section-title" id="section-15">Section 15: User Guide - Alert Management</h1>
+<p>The Alerts page shows all system alerts, statistics, filters, and action buttons. Alerts can be filtered by status, severity, and search keyword. Each row shows severity, device ID, alert type, message, status, timestamp, and actions. Acknowledge changes an active alert to acknowledged. Resolve changes an acknowledged alert to resolved. Critical alerts require immediate attention, warning alerts require investigation, and info alerts indicate routine or recovery events.</p>
+<h1 class="section-title" id="section-16">Section 16: User Guide - Scenario Testing</h1>
+<p>The Scenarios page provides fault scenario validation. Statistics show total runs, pass count, fail count, and average confidence. Available scenarios include High CPU Overload, Packet Loss Surge, Restart Instability, and Normal Steady State. Running a scenario generates simulated readings, builds an observation window, runs prediction, and displays expected class, predicted class, confidence, result, and alert status. The run history table records scenario name, device, expected class, predicted class, result, confidence, and timestamp.</p>
+<h1 class="section-title" id="section-17">Section 17: User Guide - Evaluation Dashboard</h1>
+<p>The Evaluation page is the primary dissertation evidence page. It compares System Uptime, Recorded Incidents, Fault Detection Time, Response Time, and Outage Duration before and after InfraSight. It highlights 81 percent reduction in fault detection time, 65 percent reduction in response time, 68 percent reduction in outage duration, and 5.4 percent improvement in uptime. The page also shows model performance cards, confusion matrix, feature importance chart, before vs after chart, system activity summary, JSON export, and PDF export.</p>
+<h1 class="section-title" id="section-18">Section 18: User Guide - Settings</h1>
+<p>The Settings page displays threshold settings, polling settings, model settings, and system information. Thresholds include CPU, memory, packet loss, latency, interface error, and uptime critical values. Polling interval defaults to 30 seconds. Model settings show version, training date, accuracy, and samples. System information includes Firebase project ID infrasight-gzu, backend version, frontend version, and environment mode.</p>
+<h1 class="section-title" id="section-19">Section 19: Developer Guide - Local Setup</h1>
+<p>Prerequisites include Python 3.11 or higher, Node.js 18 or higher, Git, and a configured Firebase project. Repository structure contains infrasight-api, infrasight-web, docs, verify-all.ps1, .gitignore, and README.md. Backend setup uses python -m venv .venv, activation, and pip install -r requirements.txt. Frontend setup uses npm install. Verification uses .\verify-all.ps1 and should end with ALL CHECKS PASSED.</p>
+<h1 class="section-title" id="section-20">Section 20: Developer Guide - Backend Structure</h1>
+<table><thead><tr><th>Path</th><th>Module</th><th>Purpose</th></tr></thead><tbody>
+<tr><td>app/main.py</td><td>Application entry</td><td>FastAPI app and startup</td></tr>
+<tr><td>app/core/config.py</td><td>Configuration</td><td>Environment settings</td></tr>
+<tr><td>app/core/firebase.py</td><td>Firebase init</td><td>Admin SDK setup</td></tr>
+<tr><td>app/api/devices.py</td><td>Devices router</td><td>Device endpoints</td></tr>
+<tr><td>app/api/alerts.py</td><td>Alerts router</td><td>Alert endpoints</td></tr>
+<tr><td>app/api/predictions.py</td><td>Predictions router</td><td>ML endpoints</td></tr>
+<tr><td>app/api/scenarios.py</td><td>Scenarios router</td><td>Scenario endpoints</td></tr>
+<tr><td>app/api/evaluation.py</td><td>Evaluation router</td><td>KPI endpoints</td></tr>
+<tr><td>app/api/telemetry.py</td><td>Telemetry router</td><td>Telemetry endpoints</td></tr>
+<tr><td>app/services/prediction_service.py</td><td>ML service</td><td>Inference</td></tr>
+<tr><td>app/services/alert_service.py</td><td>Alert service</td><td>Alert logic</td></tr>
+<tr><td>app/services/evaluation_service.py</td><td>Eval service</td><td>KPIs</td></tr>
+<tr><td>app/services/scenario_service.py</td><td>Scenario service</td><td>Runs</td></tr>
+<tr><td>app/services/status_updater.py</td><td>Status service</td><td>Health</td></tr>
+<tr><td>app/simulation/simulator.py</td><td>Simulator</td><td>Telemetry generation</td></tr>
+<tr><td>app/simulation/window_builder.py</td><td>Window builder</td><td>Aggregation</td></tr>
+<tr><td>app/jobs/polling_job.py</td><td>Polling job</td><td>Background cycle</td></tr>
+<tr><td>app/ml/dataset_builder.py</td><td>Dataset builder</td><td>Training data</td></tr>
+<tr><td>app/ml/trainer.py</td><td>Model trainer</td><td>RF training</td></tr>
+<tr><td>app/ml/model_manager.py</td><td>Model manager</td><td>Load and predict</td></tr>
+<tr><td>app/ml/models/rf_model.joblib</td><td>Trained model</td><td>Serialized Random Forest</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-21">Section 21: Deployment Guide</h1>
+<p>GitHub setup uses git remote add origin, git branch -M main, and git push -u origin main. Backend deployment on Render uses root directory infrasight-api, build command pip install -r requirements.txt, and start command uvicorn app.main:app --host 0.0.0.0 --port $PORT. Required Render variables include FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY, FIREBASE_PRIVATE_KEY_ID, FIREBASE_CLIENT_ID, and MOCK_MODE=false. Frontend deployment on Vercel uses root directory infrasight-web, build command npm run build, output directory dist, and VITE environment variables including VITE_API_BASE_URL. Firebase Authentication authorized domains must include the Vercel domain.</p>
+<h1 class="section-title" id="section-22">Section 22: Security Considerations</h1>
+<p>Never commit infrasight-api/.env, infrasight-web/.env, infrasight-web/.env.production, Firebase service account JSON, infrasight-api/.venv, infrasight-web/node_modules, infrasight-web/dist, or infrasight-api/app/ml/models. Firebase credentials must be stored as environment variables. Firestore rules should enforce authentication. API CORS should allow trusted origins only.</p>
+<h1 class="section-title" id="section-23">Section 23: Troubleshooting Guide</h1>
+<p>If the backend will not start, check virtual environment activation, requirements installation, .env values, and run .\.venv\Scripts\python.exe -c "import app.main". If the frontend will not build, run npm install and check import paths. If Firebase shows mock mode, check FIREBASE_SERVICE_ACCOUNT_PATH and MOCK_MODE=false. If login fails, check Firebase Authentication Email/Password provider and web config. If predictions are wrong, check model file and feature order. If verify-all fails, fix the first FAIL message and rerun. If charts do not render, confirm recharts is installed and chart data arrays are not empty.</p>
+<h1 class="section-title" id="section-24">Section 24: Evaluation Results Summary</h1>
+<table><thead><tr><th>Metric</th><th>Before InfraSight</th><th>After InfraSight</th><th>Change</th><th>Improvement</th></tr></thead><tbody>
+<tr><td>System Uptime</td><td>92.4 percent</td><td>97.8 percent</td><td>plus 5.4 percent</td><td>Improved</td></tr>
+<tr><td>Recorded Incidents</td><td>37</td><td>44</td><td>plus 7</td><td>More detected</td></tr>
+<tr><td>Fault Detection Time</td><td>96 minutes</td><td>18 minutes</td><td>minus 78 minutes</td><td>81 percent faster</td></tr>
+<tr><td>Response Time</td><td>142 minutes</td><td>49 minutes</td><td>minus 93 minutes</td><td>65 percent faster</td></tr>
+<tr><td>Outage Duration</td><td>128 minutes</td><td>41 minutes</td><td>minus 87 minutes</td><td>68 percent shorter</td></tr>
+</tbody></table>
+<table><thead><tr><th>Metric</th><th>Value</th><th>Interpretation</th></tr></thead><tbody>
+<tr><td>Accuracy</td><td>100 percent</td><td>All test samples correctly classified</td></tr>
+<tr><td>Precision</td><td>100 percent</td><td>No false positive fault predictions</td></tr>
+<tr><td>Recall</td><td>100 percent</td><td>All actual faults correctly identified</td></tr>
+<tr><td>F1 Score</td><td>100 percent</td><td>Perfect harmonic mean of precision and recall</td></tr>
+<tr><td>Top Feature</td><td>Packet Loss</td><td>Strongest predictor of fault prone state</td></tr>
+<tr><td>Model Version</td><td>rf-v1</td><td>Random Forest with 200 estimators</td></tr>
+<tr><td>Training Samples</td><td>500</td><td>Balanced synthetic dataset</td></tr>
+</tbody></table>
+<table><thead><tr><th>Objective</th><th>Status</th><th>Evidence in System</th></tr></thead><tbody>
+<tr><td>Monitor ICT infrastructure in real time</td><td>Achieved</td><td>Dashboard device health grid and KPI cards</td></tr>
+<tr><td>Collect and process device telemetry</td><td>Achieved</td><td>Telemetry simulator and window builder</td></tr>
+<tr><td>Classify devices using Random Forest</td><td>Achieved</td><td>rf-v1 model with 100 percent accuracy</td></tr>
+<tr><td>Generate alerts from predictions</td><td>Achieved</td><td>Automatic alert creation for fault_prone devices</td></tr>
+<tr><td>Support alert acknowledgement and resolution</td><td>Achieved</td><td>Alerts page workflow</td></tr>
+<tr><td>Validate using scenario testing</td><td>Achieved</td><td>Four scenarios with pass/fail evaluation</td></tr>
+<tr><td>Present evaluation evidence</td><td>Achieved</td><td>Evaluation page and PDF export</td></tr>
+<tr><td>Integrate with cloud services</td><td>Achieved</td><td>Live Firebase Firestore project infrasight-gzu</td></tr>
+<tr><td>Support production deployment</td><td>Achieved</td><td>Vercel and Render configs ready</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-25">Section 25: Glossary</h1>
+<table><thead><tr><th>Term</th><th>Definition</th></tr></thead><tbody>
+<tr><td>Random Forest</td><td>An ensemble machine learning algorithm that builds multiple decision trees and combines their outputs for accurate classification.</td></tr>
+<tr><td>Fault Prone</td><td>A device classification meaning telemetry patterns are associated with likely faults or degraded performance.</td></tr>
+<tr><td>Telemetry</td><td>Performance and health data from devices including CPU, memory, packet loss, and latency.</td></tr>
+<tr><td>Observation Window</td><td>A fixed-size aggregation of telemetry readings used as prediction model input. InfraSight uses 10 readings.</td></tr>
+<tr><td>Feature Importance</td><td>A measure of how much each input variable contributes to model predictions.</td></tr>
+<tr><td>Firestore</td><td>Google Firebase cloud-hosted NoSQL document database used by InfraSight.</td></tr>
+<tr><td>Firebase Authentication</td><td>Firebase service for user identity management and secure login.</td></tr>
+<tr><td>Simulation</td><td>Generation of synthetic telemetry data for testing and demonstration.</td></tr>
+<tr><td>Scenario</td><td>A predefined fault condition template used to test system response.</td></tr>
+<tr><td>KPI</td><td>Key Performance Indicator used to evaluate objectives.</td></tr>
+<tr><td>CORS</td><td>Cross-Origin Resource Sharing controls which domains can request backend resources.</td></tr>
+<tr><td>Uvicorn</td><td>ASGI web server used to run FastAPI.</td></tr>
+<tr><td>Vite</td><td>Frontend build tool for compiling and bundling React.</td></tr>
+<tr><td>Vercel</td><td>Cloud platform for frontend deployment.</td></tr>
+<tr><td>Render</td><td>Cloud platform for backend web services.</td></tr>
+</tbody></table>
+<h1 class="section-title" id="section-26">Section 26: Conclusion</h1>
+<p>InfraSight is a complete, verified, and deployable ICT infrastructure monitoring and predictive maintenance system designed for Great Zimbabwe University. The system demonstrates how machine learning can improve fault detection, reduce response time, and support proactive maintenance decisions. Key achievements include a Random Forest prediction engine using eight telemetry variables, 81 percent reduction in fault detection time, live Firebase cloud integration, complete alert management, four validated scenarios, production-ready Vercel and Render configuration, examiner-ready Demo Mode, and PDF evidence export. InfraSight provides a strong academic contribution by combining real-time monitoring, machine learning, cloud services, and evidence-based evaluation into one demonstrable dissertation prototype.</p>
+</div></div></body></html>

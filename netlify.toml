@@ -1,0 +1,20 @@
+# Netlify configuration for InfraSight (React + Vite in subfolder "infrasight-web")
+# Frontend build from GitHub; backend is on Cloud Run and configured via VITE_API_URL
+
+[build]
+  base = "infrasight-web"
+  command = "npm run build"
+  publish = "dist"
+
+# Single Page App fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Example: Proxy API to Cloud Run (uncomment and replace YOUR-BACKEND-DOMAIN)
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://YOUR-BACKEND-DOMAIN/api/:splat"
+#   status = 200
+#   force = true

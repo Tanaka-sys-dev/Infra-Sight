@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { alertsAPI, devicesAPI, predictionsAPI, telemetryAPI } from '../services/api'
+import { EmptyState, ErrorState, SkeletonPage } from '../components/UI'
 import { useDemoMode } from '../contexts/DemoContext'
+import { canonicalDeviceId, canonicalDeviceName, predictionLabel, recommendedAction } from '../utils/presentation'
 
 const metrics = [
   ['cpuUsage', 'CPU Usage', '%'],
@@ -97,17 +99,17 @@ export default function DeviceDetail() {
     }
   }
 
-  if (loading) return <div className="loading">Loading device...</div>
-  if (error) return <div className="error-box">Unable to load device: {error}</div>
-  if (!device) return <div className="error-box">Device not found</div>
+  if (loading) return <SkeletonPage />
+  if (error) return <ErrorState message={error} onRetry={loadData} />
+  if (!device) return <EmptyState title="Device not found" detail="Return to the Devices list and select a valid asset." />
 
   return (
     <div className="device-detail">
       <section className="detail-header">
-        <div><h2>{device.name}</h2><p>{device.location || 'Unknown location'}</p></div>
+        <div><h2>{canonicalDeviceId(device)} · {canonicalDeviceName(device)}</h2><p>{device.location || 'GZU Campus'} · telemetry-driven fault monitoring</p></div>
         <span className="badge blue">{device.type}</span>
         <span className={`badge ${statusColor(device.status)}`}>{device.status}</span>
-        <span className={`badge ${predictedClass === 'fault_prone' ? 'red' : 'green'}`}>{predictedClass}</span>
+        <span className={`badge ${predictedClass === 'fault_prone' ? 'red' : 'green'}`}>{predictionLabel(predictedClass)}</span>
         <span className="muted">Last seen: {formatTime(device.last_seen || device.lastSeen)}</span>
       </section>
 
@@ -115,7 +117,7 @@ export default function DeviceDetail() {
         {metrics.map(([key, label, unit]) => <div className={`kpi ${metricState(key, current[key])}`} key={key}><span>{label}</span><strong>{current[key] ?? '-'}{current[key] != null ? unit : ''}</strong></div>)}
       </section>
 
-      <div className="action-row"><button className="primary-button" onClick={simulate} disabled={simulating}>{simulating ? 'Simulating...' : 'Simulate Reading'}</button><button className="secondary-button" onClick={predictNow} disabled={predicting || !Object.keys(current).length}>{predicting ? 'Predicting...' : 'Predict Now'}</button></div>
+      <div className="action-row"><button className="primary-button" onClick={simulate} disabled={simulating}>{simulating ? 'Collecting...' : 'Simulate Telemetry Reading'}</button><button className="secondary-button" onClick={predictNow} disabled={predicting || !Object.keys(current).length}>{predicting ? 'Classifying...' : 'Predict Fault Risk'}</button></div>
 
       <section className="charts">
         <TelemetryChart title="CPU and Memory" data={chartData} lines={[['cpuUsage', '#2563eb'], ['memoryUsage', '#7c3aed']]} />
@@ -123,9 +125,9 @@ export default function DeviceDetail() {
         <TelemetryChart title="Errors and Restarts" data={chartData} lines={[['interfaceErrorCount', '#ca8a04'], ['restartFrequency', '#be123c']]} />
       </section>
 
-      <section className="panel"><h3>Random Forest Prediction</h3><div className="prediction-header"><span className={`badge ${predictedClass === 'fault_prone' ? 'red' : 'green'}`}>{predictedClass}</span><strong>{((prediction?.confidence || 0) * 100).toFixed(0)}%</strong></div><div className="confidence-track"><span style={{ width: `${Math.round((prediction?.confidence || 0) * 100)}%` }} /></div><ResponsiveContainer width="100%" height={180}><BarChart data={topFeatures} layout="vertical"><XAxis type="number" /><YAxis dataKey="name" type="category" width={140} /><Tooltip /><Bar dataKey="value" fill="#16a34a" /></BarChart></ResponsiveContainer><p>Model: {prediction?.modelVersion || 'rf-v1'}</p><p>Last prediction: {formatTime(prediction?.createdAt || prediction?.timestamp)}</p></section>
+      <section className="panel"><h3>Random Forest Fault-Risk Classification</h3><div className="prediction-header"><span className={`badge ${predictedClass === 'fault_prone' ? 'red' : 'green'}`}>{predictionLabel(predictedClass)}</span><strong>{((prediction?.confidence || 0) * 100).toFixed(0)}%</strong></div><div className="confidence-track"><span style={{ width: `${Math.round((prediction?.confidence || 0) * 100)}%` }} /></div><ResponsiveContainer width="100%" height={180}><BarChart data={topFeatures} layout="vertical"><XAxis type="number" /><YAxis dataKey="name" type="category" width={140} /><Tooltip /><Bar dataKey="value" fill="#16a34a" /></BarChart></ResponsiveContainer><p>Model: {prediction?.modelVersion || 'rf-v1'}</p><p>Last prediction: {formatTime(prediction?.createdAt || prediction?.timestamp)}</p></section>
 
-      <section className="panel"><h3>Recent Alerts</h3>{alerts.slice(0, 5).map(alert => <div className="alert-row" key={alert.id}><span className={`badge ${alert.severity === 'critical' ? 'red' : 'amber'}`}>{alert.severity}</span><span>{alert.message}</span><span>{alert.resolved ? 'resolved' : 'active'}</span><span>{formatTime(alert.timestamp)}</span></div>)}</section>
+      <section className="panel"><h3>Recent Alert Actions</h3>{alerts.slice(0, 5).map(alert => <div className="alert-row" key={alert.id}><span className={`badge ${alert.severity === 'critical' ? 'red' : 'amber'}`}>{alert.severity}</span><span>{alert.message}</span><span>{recommendedAction(alert)}</span><span>{alert.resolved ? 'resolved' : 'active'}</span><span>{formatTime(alert.timestamp)}</span></div>)}</section>
 
       <style>{styles}</style>
     </div>

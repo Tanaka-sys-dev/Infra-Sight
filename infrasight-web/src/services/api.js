@@ -34,6 +34,7 @@ export const api = {
 export const devicesAPI = {
   getAll: () => api.get('/api/devices'),
   getById: (deviceId) => api.get(`/api/devices/${deviceId}`),
+  update: (deviceId, data) => api.put(`/api/devices/${deviceId}`, data),
 }
 
 export const alertsAPI = {
@@ -47,6 +48,7 @@ export const alertsAPI = {
     const alerts = await api.get('/api/alerts')
     return alerts.filter(alert => alert.device_id === deviceId || alert.deviceId === deviceId)
   },
+  create: (payload) => api.post('/api/alerts', payload),
 }
 
 export const predictionsAPI = {

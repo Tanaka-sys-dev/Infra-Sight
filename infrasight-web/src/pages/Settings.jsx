@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { predictionsAPI, settingsAPI } from '../services/api'
+import { ErrorState, SkeletonPage } from '../components/UI'
 
 const defaults = {
   cpuWarning: 70,
@@ -46,7 +47,10 @@ export default function Settings() {
     }
   }
 
-  if (loading) return <div className="spinner">Loading settings...</div>
+  if (loading) return <SkeletonPage />
+  if (!loading && message.startsWith('Unable to load settings:')) {
+    return <ErrorState message={message.replace('Unable to load settings: ', '')} onRetry={() => location.reload()} />
+  }
 
   return <div className="settings-page"><div className="page-header"><h3>Settings</h3><p>Great Zimbabwe University InfraSight configuration</p></div>{message && <div className="toast">{message}</div>}<section className="panel"><h4>Threshold Settings</h4><div className="grid"><Field label="CPU Warning Threshold (%)" value={thresholds.cpuWarning} onChange={value => update('cpuWarning', value)} /><Field label="Memory Warning Threshold (%)" value={thresholds.memoryWarning} onChange={value => update('memoryWarning', value)} /><Field label="Packet Loss Warning Threshold (%)" value={thresholds.packetLossWarning} onChange={value => update('packetLossWarning', value)} /><Field label="Latency Warning Threshold (ms)" value={thresholds.latencyWarning} onChange={value => update('latencyWarning', value)} /><Field label="Interface Error Warning Threshold" value={thresholds.interfaceErrorWarning} onChange={value => update('interfaceErrorWarning', value)} /><Field label="Uptime Critical Threshold (%)" value={thresholds.uptimeCritical} onChange={value => update('uptimeCritical', value)} /></div><button onClick={save}>Save Changes</button></section><section className="panel"><h4>Polling Settings</h4><Field label="Polling Interval (seconds)" value={thresholds.pollingInterval} onChange={value => update('pollingInterval', value)} /><button onClick={save}>Save Changes</button></section><section className="panel"><h4>Model Settings</h4><div className="info-grid"><Info label="Model Version" value={modelInfo?.model_version || 'rf-v1'} /><Info label="Accuracy" value={`${((modelInfo?.metrics?.accuracy || 0) * 100).toFixed(1)}%`} /><Info label="Training Samples" value={(modelInfo?.metrics?.n_train_samples || 0) + (modelInfo?.metrics?.n_test_samples || 0)} /><Info label="Training Date" value="Saved model artifact" /></div><button onClick={retrain} disabled={training}>{training ? 'Retraining...' : 'Retrain Model'}</button></section><section className="panel"><h4>System Info</h4><div className="info-grid"><Info label="Firebase Project ID" value={systemInfo?.project_id || 'infrasight-gzu'} /><Info label="Backend Version" value="1.0.0" /><Info label="Frontend Version" value="1.0.0" /><Info label="Environment Mode" value={systemInfo?.datastore_mode || 'unknown'} /></div></section><style>{styles}</style></div>
 }

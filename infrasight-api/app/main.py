@@ -1,4 +1,5 @@
 import logging
+import os
 import threading
 import time
 from contextlib import asynccontextmanager
@@ -28,13 +29,24 @@ def _polling_loop():
         _polling_stop_event.wait(30)
 
 
+def _should_run_background() -> bool:
+    # On Cloud Run, K_SERVICE is set; default to disable background there.
+    in_cloud_run = bool(os.getenv("K_SERVICE"))
+    default_enable = not in_cloud_run
+    flag = os.getenv("ENABLE_BACKGROUND_POLLING", "1" if default_enable else "0")
+    return flag.lower() in {"1", "true", "yes"}
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _polling_thread
-    _polling_stop_event.clear()
-    _polling_thread = threading.Thread(target=_polling_loop, daemon=True, name="infrasight-telemetry-poller")
-    _polling_thread.start()
-    logger.info("Background telemetry polling started")
+    if _should_run_background():
+        _polling_stop_event.clear()
+        _polling_thread = threading.Thread(target=_polling_loop, daemon=True, name="infrasight-telemetry-poller")
+        _polling_thread.start()
+        logger.info("Background telemetry polling started")
+    else:
+        logger.info("Background telemetry polling disabled (serverless mode)")
     try:
         yield
     finally:
@@ -52,9 +64,21 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Configure CORS with explicit origins (env override supported)
+_default_origins = [
+    "http://localhost:5173",
+    "https://YOUR-SITE-NAME.netlify.app",  # replace with actual Netlify domain
+]
+_allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "")
+_allowed_origins = (
+    [o.strip() for o in _allowed_origins_env.split(",") if o.strip()]
+    if _allowed_origins_env
+    else _default_origins
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
