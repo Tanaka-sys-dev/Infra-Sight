@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import numpy as np
@@ -5,7 +6,11 @@ import numpy as np
 from app.ml.dataset_builder import FEATURE_COLUMNS, DatasetBuilder
 from app.ml.trainer import ModelTrainer
 
-MODEL_DIR = Path(__file__).parent / "models"
+if os.getenv("VERCEL"):
+    MODEL_DIR = Path("/tmp/infrasight-models")
+else:
+    MODEL_DIR = Path(__file__).parent / "models"
+
 MODEL_PATH = MODEL_DIR / "rf_model.joblib"
 METRICS_PATH = MODEL_DIR / "rf_model.metrics.json"
 FEATURES_PATH = MODEL_DIR / "rf_model.features.json"
