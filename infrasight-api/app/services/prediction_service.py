@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -10,16 +11,21 @@ class PredictionService:
 
     def __init__(self):
         self.model_manager = ModelManager()
-        if not self.model_manager.load_model():
+        loaded = self.model_manager.load_model()
+        if not loaded and not os.getenv("VERCEL"):
             self.model_manager.train_and_save(n_samples=500)
 
     def predict_for_device(self, device_id, features_dict, datastore=None):
         store = datastore
-        result = self.model_manager.predict(features_dict)
-        top_features = []
-        for item in self.model_manager.trainer.feature_importance[:3]:
-            name = item["feature"]
-            top_features.append({"name": name, "value": float(features_dict.get(name, 0)), "importance": item["importance"]})
+        if not self.model_manager.is_loaded or self.model_manager.trainer is None or self.model_manager.trainer.model is None:
+            result = {"predictedClass": "normal", "confidence": 0.0, "allProbabilities": {"normal": 1.0, "fault_prone": 0.0}}
+            top_features = []
+        else:
+            result = self.model_manager.predict(features_dict)
+            top_features = []
+            for item in self.model_manager.trainer.feature_importance[:3]:
+                name = item["feature"]
+                top_features.append({"name": name, "value": float(features_dict.get(name, 0)), "importance": item["importance"]})
         prediction_id = str(uuid4())
         created_at = datetime.now(timezone.utc).isoformat()
         document = {

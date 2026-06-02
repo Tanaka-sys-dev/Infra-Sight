@@ -40,10 +40,24 @@ class ModelManager:
 
     def load_model(self):
         if MODEL_PATH.exists():
-            self.trainer = ModelTrainer()
-            self.trainer.load_model(MODEL_PATH)
-            self.is_loaded = True
-            return True
+            try:
+                self.trainer = ModelTrainer()
+                self.trainer.load_model(MODEL_PATH)
+                self.is_loaded = True
+                return True
+            except Exception:
+                try:
+                    if MODEL_PATH.exists():
+                        MODEL_PATH.unlink()
+                    if METRICS_PATH.exists():
+                        METRICS_PATH.unlink()
+                    if FEATURES_PATH.exists():
+                        FEATURES_PATH.unlink()
+                except Exception:
+                    pass
+                self.trainer = None
+                self.is_loaded = False
+                return False
         return False
 
     def predict(self, features_dict):
