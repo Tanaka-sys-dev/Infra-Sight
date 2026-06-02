@@ -26,6 +26,12 @@ function toInventoryLocation(tab: LocationTab): string {
   return tab
 }
 
+function toDeviceClass(s: string): DeviceClass {
+  const v = String(s || '').toLowerCase().replace(/\s+/g, '_') as DeviceClass
+  if (['switch','router','server','workstation','printer','access_point','media_converter','ups'].includes(v)) return v
+  return 'workstation'
+}
+
 interface LiveDeviceMap {
   byCanonicalId: Record<string, any>
   list: any[]
@@ -67,10 +73,15 @@ export default function InfrastructurePage() {
   const [selectedFaultByDevice, setSelectedFaultByDevice] = useState<Record<string, string>>({})
   const [drawerInitTab, setDrawerInitTab] = useState<'overview' | 'telemetry' | 'faults' | 'actions'>('overview')
   const [drawerSteps, setDrawerSteps] = useState<string[] | undefined>(undefined)
+  const [dynamicInventory, setDynamicInventory] = useState<InfrastructureDevice[]>([])
+  const [addOpen, setAddOpen] = useState(false)
+  type NewDevicePayload = { name: string; type: DeviceClass; status: string; location: string }
+  const [newDevice, setNewDevice] = useState<NewDevicePayload>({ name: '', type: 'switch', status: 'online', location: 'Admin Block' })
+  const [creating, setCreating] = useState(false)
   type Toast = { id: number; message: string; actionLabel?: string; onAction?: () => void }
   const [toasts, setToasts] = useState<Toast[]>([])
 
-  const inventory = INFRASTRUCTURE_DEVICES
+  const inventory = useMemo(() => [...INFRASTRUCTURE_DEVICES, ...dynamicInventory], [dynamicInventory])
   const inventoryEmpty = !inventory || inventory.length === 0
 
   const load = async () => {
@@ -94,6 +105,22 @@ export default function InfrastructurePage() {
         flags.set(id, prev)
       }
       setActiveAlertFlags(flags)
+      const staticKeys = new Set(INFRASTRUCTURE_DEVICES.map(d => canonicalDeviceId(d.deviceId, d.deviceClass)))
+      const extra: InfrastructureDevice[] = []
+      for (const d of devices || []) {
+        const key = canonicalDeviceId(d)
+        if (!staticKeys.has(key)) {
+          extra.push({
+            deviceId: d.id || d.deviceId || key,
+            deviceClass: toDeviceClass(d.type || ''),
+            model: String(d.model || 'Generic'),
+            location: String(d.location || 'Admin Block'),
+            ipAddress: String(d.ip_address || d.ipAddress || ''),
+            macAddress: String(d.mac_address || d.macAddress || '00:00:00:00:00:00'),
+          })
+        }
+      }
+      setDynamicInventory(extra)
     } catch (err: any) {
       setError(err.message || 'Unable to load live device states')
     } finally {
@@ -287,6 +314,38 @@ export default function InfrastructurePage() {
           <p>Mirror of campus ICT assets with live health states.</p>
         </div>
         <span className="source">Static inventory + Live device/alert state</span>
+      </div>
+
+      <div className="panel" style={{ display: 'grid', gap: 10, marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <button className="ui-button" onClick={() => setAddOpen(v => !v)}>{addOpen ? 'Close' : 'Add Device'}</button>
+        </div>
+        {addOpen && (
+          <form onSubmit={async (e) => { e.preventDefault(); setCreating(true); try { await devicesAPI.create(newDevice); await load(); setNewDevice({ name: '', type: 'switch', status: 'online', location: 'Admin Block' }); setAddOpen(false) } finally { setCreating(false) } }} style={{ display: 'grid', gap: 10 }}>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <input required placeholder="Name" value={newDevice.name} onChange={(e) => setNewDevice(prev => ({ ...prev, name: e.target.value }))} />
+              <select value={newDevice.type} onChange={(e) => setNewDevice(prev => ({ ...prev, type: e.target.value as DeviceClass }))}>
+                <option value="switch">Switch</option>
+                <option value="router">Router</option>
+                <option value="server">Server</option>
+                <option value="workstation">Workstation</option>
+                <option value="printer">Printer</option>
+                <option value="access_point">Access Point</option>
+                <option value="media_converter">Media Converter</option>
+                <option value="ups">UPS</option>
+              </select>
+              <select value={newDevice.status} onChange={(e) => setNewDevice(prev => ({ ...prev, status: e.target.value }))}>
+                <option value="online">Online</option>
+                <option value="warning">Warning</option>
+                <option value="critical">Critical</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="offline">Offline</option>
+              </select>
+              <input required placeholder="Location" value={newDevice.location} onChange={(e) => setNewDevice(prev => ({ ...prev, location: e.target.value }))} />
+              <button className="ui-button" type="submit" disabled={creating}>{creating ? 'Adding…' : 'Create Device'}</button>
+            </div>
+          </form>
+        )}
       </div>
 
       {/* Location Tabs */}

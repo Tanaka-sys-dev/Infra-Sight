@@ -35,6 +35,7 @@ export const api = {
 export const devicesAPI = {
   getAll: () => api.get('/api/devices'),
   getById: (deviceId) => api.get(`/api/devices/${deviceId}`),
+  create: (data) => api.post('/api/devices', data),
   update: (deviceId, data) => api.put(`/api/devices/${deviceId}`, data),
 }
 
