@@ -88,3 +88,9 @@ The verifier checks project structure, Firebase modules, secret ignore patterns,
 ## Secret Safety
 
 Do not commit `.env`, service account JSON, private keys, virtual environments, node modules, build output, or generated model artifacts.
+
+## Licence
+
+Copyright (c) 2026 Tanaka Mugariwa. All rights reserved.
+
+This repository is public so the work can be viewed and assessed. No licence is granted to copy, modify or redistribute it without written permission.
